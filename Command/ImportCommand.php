@@ -6,7 +6,7 @@ namespace Bordeux\Bundle\GeoNameBundle\Command;
 use Bordeux\Bundle\GeoNameBundle\Import\ImportInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Uri;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @author Chris Bednarczyk <chris@tourradar.com>
  * @package TourRadar\Bundle\ApiBundle\Command\Queue
  */
-class ImportCommand extends ContainerAwareCommand
+class ImportCommand extends Command
 {
 
     /**

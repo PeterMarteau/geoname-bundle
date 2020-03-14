@@ -25,9 +25,14 @@ services:
         arguments: ["@doctrine.orm.default_entity_manager"]
         public: true
 
-
-    #auto register all commands
     bordeux.geoname.command.import:
         class: Bordeux\Bundle\GeoNameBundle\Command\ImportCommand
+        arguments: [
+            "@parameter_bag",
+            "@bordeux.geoname.import.timezone",
+            "@bordeux.geoname.import.administrative",
+            "@bordeux.geoname.import.geoname",
+            "@bordeux.geoname.import.country",
+            "@bordeux.geoname.import.hierarchy"]
         tags:
               - { name: console.command }

@@ -3,7 +3,12 @@
 namespace Bordeux\Bundle\GeoNameBundle\Command;
 
 
+use Bordeux\Bundle\GeoNameBundle\Import\AdministrativeImport;
+use Bordeux\Bundle\GeoNameBundle\Import\CountryImport;
+use Bordeux\Bundle\GeoNameBundle\Import\GeoNameImport;
+use Bordeux\Bundle\GeoNameBundle\Import\HierarchyImport;
 use Bordeux\Bundle\GeoNameBundle\Import\ImportInterface;
+use Bordeux\Bundle\GeoNameBundle\Import\TimeZoneImport;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Uri;
 use Symfony\Component\Console\Command\Command;
@@ -20,18 +25,37 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
  */
 class ImportCommand extends Command
 {
-
-    /**
-     *
-     */
+    
     const PROGRESS_FORMAT = '%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% Mem: %memory:6s% %message%';
 
     private $params;
 
-    public function __construct(ParameterBagInterface $params)
+    private $timeZoneImport;
+
+    private $administrativeImport;
+
+    private $geoNameImport;
+
+    private $countryImport;
+
+
+
+    public function __construct(
+        ParameterBagInterface $params,
+        TimeZoneImport $timeZoneImport,
+        AdministrativeImport $administrativeImport,
+        GeoNameImport $geoNameImport,
+        CountryImport $countryImport,
+        HierarchyImport $hierarchyImport
+        )
     {
         $this->params = $params;
-        
+        $this->timeZoneImport = $timeZoneImport;
+        $this->administrativeImport = $administrativeImport;
+        $this->geoNameImport = $geoNameImport;
+        $this->countryImport = $countryImport;
+        $this->hierarchyImport = $hierarchyImport;
+
         parent::__construct();
     }
     /**
@@ -172,7 +196,7 @@ class ImportCommand extends Command
         $output->writeln('');
 
         $this->importWithProgressBar(
-            $this->params->get("bordeux.geoname.import.timezone"),
+            $this->timeZoneImport,
             $timezonesLocal,
             "Importing timezones",
             $output
@@ -193,7 +217,7 @@ class ImportCommand extends Command
             $output->writeln('');
 
             $this->importWithProgressBar(
-                $this->params->get("bordeux.geoname.import.administrative"),
+                $this->administrativeImport,
                 $admin1Local,
                 "Importing administrative 1",
                 $output
@@ -216,7 +240,7 @@ class ImportCommand extends Command
             $output->writeln('');
 
             $this->importWithProgressBar(
-                $this->params->get("bordeux.geoname.import.administrative"),
+                $this->administrativeImport,
                 $admin2Local,
                 "Importing administrative 2",
                 $output
@@ -240,7 +264,7 @@ class ImportCommand extends Command
             $output->writeln('');
 
             $this->importWithProgressBar(
-                $this->params->get("bordeux.geoname.import.geoname"),
+                $this->geoNameImport,
                 $archiveLocal,
                 "Importing GeoNames",
                 $output,
@@ -253,7 +277,7 @@ class ImportCommand extends Command
 
         //countries import
         $this->importWithProgressBar(
-            $this->params->get("bordeux.geoname.import.country"),
+            $this->countryImport,
             $countryInfoLocal,
             "Importing Countries",
             $output
@@ -274,7 +298,7 @@ class ImportCommand extends Command
             $output->writeln('');
 
             $this->importWithProgressBar(
-                $this->params->get("bordeux.geoname.import.hierarchy"),
+                $this->hierarchyImport,
                 $archiveLocal,
                 "Importing Hierarchy",
                 $output,
